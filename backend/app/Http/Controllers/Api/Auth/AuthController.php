@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -23,5 +24,15 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return response()->json(['user' => Auth::user()]);
+    }
+
+    public function logout(Request $request)
+    {
+        // web ガードからログアウトし、セッションを破棄する
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();      // セッションデータを破棄する
+        $request->session()->regenerateToken(); // CSRF トークンを再生成する
+
+        return response()->json(['message' => 'ログアウトしました']);
     }
 }
