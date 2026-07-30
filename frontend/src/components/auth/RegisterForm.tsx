@@ -7,9 +7,10 @@ type RegisterFormProps = {
     loading: boolean;
     fieldErrors: Record<string, string[]>;
     generalError: string | null;
+    successMessage: string | null;
 }
 
-export function RegisterForm({ onSubmit, loading, fieldErrors, generalError }: RegisterFormProps) {
+export function RegisterForm({ onSubmit, loading, fieldErrors, generalError, successMessage }: RegisterFormProps) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -93,11 +94,13 @@ export function RegisterForm({ onSubmit, loading, fieldErrors, generalError }: R
                     value={passwordConfirmation}
                     onChange={(e) => setPasswordConfirmation(e.target.value)}
                 />
+                {renderFieldError('password_confirmation')}
             </div>
             <button type="submit" disabled={loading}>
                 {loading ? '登録中...' : '登録'}
             </button>
             {generalError && <p className="text-red-500">Error: {generalError}</p>}
+            {successMessage && <p className="text-green-500">{successMessage}</p>}
         </form>
     )
 }

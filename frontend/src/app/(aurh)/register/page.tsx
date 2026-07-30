@@ -10,6 +10,8 @@ export default function RegisterPage() {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
     // 一般エラー（例外/500/ネットワーク等）: 単一メッセージ
     const [generalError, setGeneralError] = useState<string | null>(null);
+    // 登録成功メッセージ
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     // 成功したかどうかを返す（フォーム側で成功時のみ入力をクリアする）
     const handleRegister = async (user: User): Promise<boolean> => {
@@ -17,6 +19,7 @@ export default function RegisterPage() {
             setLoading(true);
             setFieldErrors({});
             setGeneralError(null);
+            setSuccessMessage(null);
 
             const response = await fetch('http://localhost/api/register', {
                 method: 'POST',
@@ -36,6 +39,8 @@ export default function RegisterPage() {
             }
 
             if (response.ok) {
+                // API は 201 で { message: "User created successfully" } を返す
+                setSuccessMessage(data?.message ?? '登録が完了しました');
                 return true;
             }
 
@@ -62,6 +67,7 @@ export default function RegisterPage() {
                 loading={loading}
                 fieldErrors={fieldErrors}
                 generalError={generalError}
+                successMessage={successMessage}
             />
         </main>
     )
