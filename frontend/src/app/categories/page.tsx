@@ -6,6 +6,7 @@ import { CategoryForm } from '../../components/categories/CategoryForm';
 import { Word } from '../../types/word';
 import { Category } from '../../types/category';
 import { CategoryList } from '../../components/categories/CategoryList';
+import { apiFetch } from '../../lib/api';
 
 export default function CategoriesPage() {
     const [loading, setLoading] = useState(true);
@@ -30,8 +31,8 @@ export default function CategoriesPage() {
         const fetchCategories = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost/api/words');
-                const categoriesResponse = await fetch('http://localhost/api/categories');
+                const response = await apiFetch('/api/words');
+                const categoriesResponse = await apiFetch('/api/categories');
                 const data = await response.json();
                 const categoriesData = await categoriesResponse.json();
                 setWords(data);
@@ -49,7 +50,7 @@ export default function CategoriesPage() {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch('http://localhost/api/categories', {
+            const response = await apiFetch('/api/categories', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -68,7 +69,7 @@ export default function CategoriesPage() {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch(`http://localhost/api/categories/${id}`, {
+            const response = await apiFetch(`/api/categories/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -93,9 +94,8 @@ export default function CategoriesPage() {
     const handleDeleteCategory = async (id: number) => {
         try {
             setLoading(true);
-            await fetch(`http://localhost/api/categories/${id}`, {
+            await apiFetch(`/api/categories/${id}`, {
                 method: 'DELETE',
-                headers: { 'accept': 'application/json' },
             });
             setCategories(prev => prev.filter(category => category.id !== id));
         } catch (err) {
