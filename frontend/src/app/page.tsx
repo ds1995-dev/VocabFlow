@@ -7,6 +7,7 @@ import { StatCard } from '../components/dashboard/StatCard';
 import { WordForm } from '../components/dashboard/WordForm';
 import { WordCard } from '../components/dashboard/WordCard';
 import { WordFilter } from '../components/dashboard/WordFilter';
+import { apiFetch } from '../lib/api';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -27,8 +28,8 @@ export default function Home() {
     const fetchWords = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost/api/words');
-        const categoriesResponse = await fetch('http://localhost/api/categories');
+        const response = await apiFetch('/api/words');
+        const categoriesResponse = await apiFetch('/api/categories');
         const data = await response.json();
         const categoriesData = await categoriesResponse.json();
         setWords(data);
@@ -47,7 +48,7 @@ export default function Home() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost/api/words', {
+      const response = await apiFetch('/api/words', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -70,7 +71,7 @@ export default function Home() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost/api/categories', {
+      const response = await apiFetch('/api/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -90,9 +91,8 @@ export default function Home() {
   const handleDeleteWord = async (id: number) => {
     try {
       setLoading(true);
-      await fetch(`http://localhost/api/words/${id}`, {
+      await apiFetch(`/api/words/${id}`, {
         method: 'DELETE',
-        headers: { 'accept': 'application/json' },
       });
       setWords((prevWords) => prevWords.filter(word => word.id !== id));
     } catch (err) {
@@ -105,9 +105,8 @@ export default function Home() {
   const handleToggleLearned = async (id: number) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost/api/words/${id}/toggle-learned`, {
+      const response = await apiFetch(`/api/words/${id}/toggle-learned`, {
         method: 'PATCH',
-        headers: { 'accept': 'application/json' },
       });
       const data = await response.json();
 
