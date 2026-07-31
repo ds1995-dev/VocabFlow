@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RegisterForm } from '../../../components/auth/RegisterForm';
 import { User } from '../../../types/user';
+import { apiFetch } from '../../../lib/api';
 
 
 export default function RegisterPage() {
@@ -21,11 +22,12 @@ export default function RegisterPage() {
             setGeneralError(null);
             setSuccessMessage(null);
 
-            const response = await fetch('http://localhost/api/register', {
+            // 共通ラッパー経由で送る。POST なので apiFetch が CSRF cookie 取得・
+            // X-XSRF-TOKEN 付与・credentials: 'include' を自動で行う。
+            const response = await apiFetch('/api/register', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(user)
             });
