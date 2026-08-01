@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { LoginForm } from '../../../components/auth/LoginForm';
 import { apiFetch } from '../../../lib/api';
 
@@ -69,6 +70,13 @@ export default function LoginPage() {
                 fieldErrors={fieldErrors}
                 generalError={generalError}
             />
+            {/* 未登録ユーザー向けに新規登録ページへの導線 */}
+            <p className="mt-4 text-sm text-gray-600">
+                アカウントをお持ちでない方は{' '}
+                <Link href="/register" className="text-blue-600 hover:underline">
+                    新規登録
+                </Link>
+            </p>
         </main>
     )
 }

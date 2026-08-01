@@ -13,7 +13,7 @@ function getCookie(name: string): string | null {
 }
 
 // 指定名の cookie を失効させる。
-function deleteCookie(name: string): void {
+export function deleteCookie(name: string): void {
   if (typeof document === "undefined") return;
   document.cookie = `${name}=; path=/; max-age=0`;
 }
