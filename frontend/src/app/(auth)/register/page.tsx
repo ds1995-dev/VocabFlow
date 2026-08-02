@@ -1,11 +1,13 @@
 "use client";
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { RegisterForm } from '../../../components/auth/RegisterForm';
 import { User } from '../../../types/user';
 import { apiFetch } from '../../../lib/api';
 
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     // バリデーションエラー（422）: フィールドごとのメッセージ配列
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -41,8 +43,10 @@ export default function RegisterPage() {
             }
 
             if (response.ok) {
-                // API は 201 で { message: "User created successfully" } を返す
-                setSuccessMessage(data?.message ?? '登録が完了しました');
+                // 登録時に backend で自動ログイン済み。フロント管理の認証フラグ cookie を
+                // 立ててから（middleware が参照する）ダッシュボードへ遷移する。
+                document.cookie = 'logged_in=1; path=/; SameSite=Lax';
+                router.push('/');
                 return true;
             }
 
