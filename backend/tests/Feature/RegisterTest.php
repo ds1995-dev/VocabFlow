@@ -10,6 +10,17 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // SPA フロントエンド由来のステートフルなリクエストとして扱わせ、
+        // Sanctum のセッション認証（session ミドルウェア）を有効化する。
+        // 登録後の自動ログイン（session()->regenerate）に session ストアが必要。
+        // APP_URL の localhost は sanctum.stateful に含まれる。
+        $this->withHeader('Origin', config('app.url'));
+    }
+
     public function test_正しい情報で登録すると201を返す(): void
     {
         // 有効な入力（password は confirmed のため確認用も送る）
@@ -21,9 +32,18 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        $response->assertJson(['message' => 'User created successfully']);
+        // レスポンスは作成ユーザーを返す（パスワードは含めない）
+        $response->assertJson([
+            'user' => [
+                'name' => 'テスト太郎',
+                'email' => 'taro@example.com',
+            ],
+        ]);
+        $response->assertJsonMissingPath('user.password');
         // ユーザーが DB に作成されていることを確認
         $this->assertDatabaseHas('users', ['email' => 'taro@example.com']);
+        // 登録後は自動ログイン状態になる
+        $this->assertAuthenticated();
     }
 
     public function test_重複したemailで登録すると422を返す(): void
