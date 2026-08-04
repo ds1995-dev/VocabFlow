@@ -3,51 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreWordRequest;
+use App\Http\Requests\UpdateWordRequest;
 use App\Models\Word;
 use Illuminate\Http\Request;
 
 class WordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $words = Word::with('category')
+        $words = $request->user()
+            ->words()
+            ->with('category')
             ->get();
 
         return response()->json($words);
     }
 
-    public function store(Request $request)
+    public function store(StoreWordRequest $request)
     {
-        $validated = $request->validate([
-            'word' => 'required|string|max:255',
-            'meaning' => 'required|string',
-            'sentence' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $word = Word::create($validated);
+        $word = $request->user()
+            ->words()
+            ->create($request->validated());
 
         $word->load('category');
 
         return response()->json($word, 201);
     }
 
-    public function update(Request $request, Word $word)
+    public function update(UpdateWordRequest $request, Word $word)
     {
-        $validated = $request->validate([
-            'word' => 'required|string|max:255',
-            'meaning' => 'required|string',
-            'sentence' => 'nullable|string',
-            'category_id' => 'required|exists:categories,id',
-        ]);
+        $this->authorize('update', $word);
 
-        $word->update($validated);
+        $word->update($request->validated());
+
+        $word->load('category');
 
         return response()->json($word);
     }
 
     public function destroy(Word $word)
     {
+        $this->authorize('delete', $word);
+
         $word->delete();
 
         return response()->json([
@@ -57,9 +55,12 @@ class WordController extends Controller
 
     public function toggleLearned(Word $word)
     {
-        $word->is_learned = !$word->is_learned;
-        $word->load('category');
+        $this->authorize('update', $word);
+
+        $word->is_learned = ! $word->is_learned;
         $word->save();
+
+        $word->load('category');
 
         return response()->json($word);
     }
