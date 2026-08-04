@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Word;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
@@ -14,5 +13,10 @@ class Category extends Model
     public function words()
     {
         return $this->hasMany(Word::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
