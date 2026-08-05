@@ -24,7 +24,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
             setIsSaving(true);
             await onUpdate(category.id, editingName);
             setIsEditing(false);
-        } catch (err) {
+        } catch {
             alert('Failed to update category');
             setEditingName(category.name);
         } finally {

@@ -122,7 +122,7 @@ export default function Home() {
   }
 
   const filteredWords = words.filter(word => {
-    const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) || word.meaning.toLowerCase().includes(search.toLowerCase()) || word.sentence.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) || word.meaning.toLowerCase().includes(search.toLowerCase()) || (word.sentence?.toLowerCase().includes(search.toLowerCase()) ?? false);
     const matchesFilter = filter === 'all' || (filter === 'learned' && word.is_learned) || (filter === 'unlearned' && !word.is_learned);
     const matchesCategory = categoryFilter === 'all' || word.category_id === categoryFilter;
     return matchesSearch && matchesFilter && matchesCategory;
