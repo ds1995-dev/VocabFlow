@@ -1,6 +1,4 @@
-import { on } from 'events';
-import { Category } from '../../types/category'
-    ;
+import { Category } from '../../types/category';
 type Filter = 'all' | 'learned' | 'unlearned';
 
 type WordFilterProps = {
