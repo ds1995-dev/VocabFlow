@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\StreakController;
 use App\Http\Controllers\Api\WordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/words/{word}/toggle-learned', [WordController::class, 'toggleLearned']);
 
     Route::resource('categories', CategoryController::class);
+
+    // 学習ストリーク（連続学習日数）
+    Route::get('/streak', [StreakController::class, 'show']);
 });
