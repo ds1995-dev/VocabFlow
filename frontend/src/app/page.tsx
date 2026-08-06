@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Word } from '../types/word';
 import { Category } from '../types/category';
+import { Streak } from '../types/streak';
 import { Header } from '../components/dashboard/Header';
 import { StatCard } from '../components/dashboard/StatCard';
 import { WordForm } from '../components/dashboard/WordForm';
@@ -14,6 +15,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [words, setWords] = useState<Word[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [streak, setStreak] = useState<Streak | null>(null);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<number | 'all'>('all')
   const [filter, setFilter] = useState<'all' | 'learned' | 'unlearned'>('all');
@@ -21,8 +23,21 @@ export default function Home() {
     { title: 'Total Words', value: words.length, subtext: 'Total words' },
     { title: 'Learned', value: words.filter(w => w.is_learned).length, subtext: 'Words' },
     { title: 'Categories', value: categories.length, subtext: 'categories' },
-    { title: 'Streak', value: words.length, subtext: 'days' }
+    { title: 'Streak', value: streak?.current_streak ?? '—', subtext: 'days' }
   ];
+
+  // ストリークは学習日タイムゾーンを基準にサーバ側で集計するため、都度取得する。
+  // 取得に失敗しても単語一覧の表示は妨げない。
+  const refreshStreak = async () => {
+    try {
+      const response = await apiFetch('/api/streak');
+      if (response.ok) {
+        setStreak(await response.json());
+      }
+    } catch {
+      // ストリークは補助的な指標なのでエラーは表示しない
+    }
+  };
 
   useEffect(() => {
     const fetchWords = async () => {
@@ -34,6 +49,7 @@ export default function Home() {
         const categoriesData = await categoriesResponse.json();
         setWords(data);
         setCategories(categoriesData);
+        await refreshStreak();
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -60,6 +76,8 @@ export default function Home() {
         throw new Error(data.message || 'Failed to add word');
       }
       setWords((prevWords) => [...prevWords, data]);
+      // その日はじめての学習ならストリークが伸びる。await しないので一覧の反映は遅れない。
+      refreshStreak();
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -114,6 +132,8 @@ export default function Home() {
         throw new Error(data.message || 'Failed to toggle learned status');
       }
       setWords((prevWords) => prevWords.map(word => word.id === id ? data : word));
+      // 学習済みへの切り替えもストリークに数えるので取り直す
+      refreshStreak();
     } catch (err) {
       setError((err as Error).message);
     } finally {
