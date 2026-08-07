@@ -33,6 +33,22 @@ class LearningActivity extends Model
     }
 
     /**
+     * 学習アクティビティを 1 件記録する。
+     *
+     * 学習イベントの記録はすべてこのメソッドを通す。学習日の導出と所有者の紐付けを
+     * ここに閉じ込めてあるので、将来クイズを実装するときも呼び出し側は
+     * 種別と対象の単語を渡すだけでよく、タイムゾーンを意識する必要がない。
+     */
+    public static function record(User $user, ActivityType $type, ?Word $word = null): self
+    {
+        return $user->learningActivities()->create([
+            'word_id' => $word?->id,
+            'type' => $type,
+            'studied_on' => self::currentStudyDate(),
+        ]);
+    }
+
+    /**
      * 学習日の区切りに使うタイムゾーンでの「今日」を Y-m-d 形式で返す。
      *
      * ストリークの日付境界はすべてこのメソッドを通す。タイムゾーンを読む箇所を
