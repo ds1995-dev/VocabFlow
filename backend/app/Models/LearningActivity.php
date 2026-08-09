@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ActivityType;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,7 +59,20 @@ class LearningActivity extends Model
      */
     public static function currentStudyDate(): string
     {
-        return CarbonImmutable::now(config('study.timezone'))->toDateString();
+        return self::studyDateFor(CarbonImmutable::now());
+    }
+
+    /**
+     * 指定した日時が、学習日タイムゾーンではどの日付にあたるかを Y-m-d 形式で返す。
+     *
+     * 過去の日時を学習日に読み替えるのはバックフィルだけだが、換算の実装を
+     * currentStudyDate() と共有するために切り出してある。
+     */
+    public static function studyDateFor(DateTimeInterface $moment): string
+    {
+        return CarbonImmutable::instance($moment)
+            ->setTimezone(config('study.timezone'))
+            ->toDateString();
     }
 
     /**
