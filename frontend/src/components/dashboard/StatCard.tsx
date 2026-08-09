@@ -1,6 +1,7 @@
 type StatCardProps = {
     title: string;
-    value: number;
+    // 取得前のストリークを '—' で表示するため文字列も受け付ける
+    value: string | number;
     subtext: string;
 }
 
