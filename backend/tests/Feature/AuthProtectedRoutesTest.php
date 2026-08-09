@@ -49,4 +49,22 @@ class AuthProtectedRoutesTest extends TestCase
             'email' => $user->email,
         ]);
     }
+
+    public function test_未認証ではストリーク取得が401を返す(): void
+    {
+        // ストリークは学習履歴なので未ログインでは 401 になる
+        $response = $this->getJson('/api/streak');
+
+        $response->assertStatus(401);
+    }
+
+    public function test_認証済みではストリーク取得が200を返す(): void
+    {
+        // ログイン済みなら学習履歴がなくても 200 で集計結果が返る
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/api/streak');
+
+        $response->assertStatus(200);
+    }
 }
