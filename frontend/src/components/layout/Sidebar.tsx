@@ -23,23 +23,23 @@ export function Sidebar() {
     };
 
     return (
-        <aside className="hidden md:block w-64 bg-white border-r border-gray-200 p-6 mr-4">
-            <h1 className="text-xl font-bold text-blue-600">
+        <aside className="hidden md:block w-64 bg-surface border-r border-line-subtle p-6 mr-4">
+            <h1 className="text-xl font-bold text-accent-soft-foreground">
                 Daily English Log
             </h1>
             <nav className="mt-8 space-y-4">
-                <Link href="/" className={pathname === '/' ? 'bg-blue-100 text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600'}>
+                <Link href="/" className={pathname === '/' ? 'bg-accent-soft text-accent-soft-foreground font-bold' : 'text-muted hover:text-accent-soft-foreground'}>
                     Home</Link>
-                <p className="text-gray-600">All Words</p>
-                <p className="text-gray-600">Learned</p>
-                <p className="text-gray-600">Unlearned</p>
-                <Link href="/categories" className={pathname === '/categories' ? 'bg-blue-100 text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600'}>
+                <p className="text-muted">All Words</p>
+                <p className="text-muted">Learned</p>
+                <p className="text-muted">Unlearned</p>
+                <Link href="/categories" className={pathname === '/categories' ? 'bg-accent-soft text-accent-soft-foreground font-bold' : 'text-muted hover:text-accent-soft-foreground'}>
                     Categories</Link>
             </nav>
             <button
                 type="button"
                 onClick={handleLogout}
-                className="mt-8 block text-left text-gray-600 hover:text-blue-600"
+                className="mt-8 block text-left text-muted hover:text-accent-soft-foreground"
             >
                 Logout
             </button>

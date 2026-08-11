@@ -34,7 +34,7 @@ export function LoginForm({ onSubmit, loading, fieldErrors, generalError }: Logi
                 <input
                     id="email"
                     type="email"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -47,7 +47,7 @@ export function LoginForm({ onSubmit, loading, fieldErrors, generalError }: Logi
                 <input
                     id="password"
                     type="password"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />

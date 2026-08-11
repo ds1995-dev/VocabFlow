@@ -51,7 +51,7 @@ export function RegisterForm({ onSubmit, loading, fieldErrors, generalError, suc
                 <input
                     id="name"
                     type="text"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
@@ -64,7 +64,7 @@ export function RegisterForm({ onSubmit, loading, fieldErrors, generalError, suc
                 <input
                     id="email"
                     type="email"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -77,7 +77,7 @@ export function RegisterForm({ onSubmit, loading, fieldErrors, generalError, suc
                 <input
                     id="password"
                     type="password"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -90,7 +90,7 @@ export function RegisterForm({ onSubmit, loading, fieldErrors, generalError, suc
                 <input
                     id="password-confirmation"
                     type="password"
-                    className="rounded border p-2"
+                    className="rounded border border-line bg-surface text-foreground p-2"
                     value={passwordConfirmation}
                     onChange={(e) => setPasswordConfirmation(e.target.value)}
                 />

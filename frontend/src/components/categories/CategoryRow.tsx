@@ -45,7 +45,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
             }
         };
     return (
-        <tr className="border-b border-gray-100 hover:bg-gray-50">
+        <tr className="border-b border-line-subtle hover:bg-surface-hover">
             <td className="py-3 flex items-center gap-2 font-bold">
                 <span className="w-3 h-3 rounded bg-blue-500 inline-block" />
                 {isEditing ? (
@@ -54,7 +54,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className="border rounded border-gray-300 p-1 flex-1"
+                        className="border rounded border-line bg-surface text-foreground p-1 flex-1"
                         autoFocus
                         disabled={isSaving}
                     />
@@ -63,7 +63,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                 )}
             </td>
             <td className="py-3">
-                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
+                <span className="rounded-full bg-accent-soft px-3 py-1 text-sm font-bold text-accent-soft-foreground">
                     {wordCount} words
                 </span>
             </td>
@@ -75,7 +75,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                                 type="button"
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="text-green-500 hover:bg-green-50 border border-gray-200 rounded p-2 disabled:opacity-50"
+                                className="text-green-500 hover:bg-chip border border-line-subtle rounded p-2 disabled:opacity-50"
                                 aria-label="Save category"
                             >
                                 <Check size={16} />
@@ -84,7 +84,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                                 type="button"
                                 onClick={handleCancel}
                                 disabled={isSaving}
-                                className="text-gray-500 hover:bg-gray-50 border border-gray-200 rounded p-2 disabled:opacity-50"
+                                className="text-muted hover:bg-chip border border-line-subtle rounded p-2 disabled:opacity-50"
                                 aria-label="Cancel editing"
                             >
                                 <X size={16} />
@@ -95,7 +95,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                         <button
                                 type="button"
                                 onClick={() => setIsEditing(true)}
-                                className="text-blue-500 hover:bg-blue-50 border border-gray-200 rounded p-2"
+                                className="text-blue-500 hover:bg-chip border border-line-subtle rounded p-2"
                                 aria-label="Edit category"
                             >
                                 <Pencil size={16} />
@@ -104,7 +104,7 @@ export function CategoryRow({ category, wordCount, onDelete, onUpdate }: Categor
                             <button
                                 type="button"
                                 onClick={() => onDelete(category.id)}
-                                className="text-red-500 hover:bg-red-50 border border-gray-200 rounded p-2"
+                                className="text-red-500 hover:bg-chip border border-line-subtle rounded p-2"
                                 aria-label="Delete category"
                             >
                                 <Trash2 size={16} />
