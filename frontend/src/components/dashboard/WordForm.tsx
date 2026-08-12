@@ -49,15 +49,15 @@ export function WordForm({ categories, onSubmit, onCreateCategory }: WordFormPro
         }
     }
     return (
-        <form className="bg-white rounded shadow-md border-gray-300 p-1 space-y-4" onSubmit={handleSubmit}>
+        <form className="bg-surface rounded shadow-md border-line p-1 space-y-4" onSubmit={handleSubmit}>
             <h2 className="md:text-lg font-bold">Add a new Word</h2>
             <div className="md:flex flex-wrap w-full min-w-0 justify-content gap-4">
-                <input className="block border rounded border-gray-300 md:p-2" type="text" value={word} onChange={(e) => setWord(e.target.value)} placeholder="Word" required />
-                <input className="block border rounded border-gray-300 md:p-2" type="text" value={meaning} onChange={(e) => setMeaning(e.target.value)} placeholder="Meaning" required />
-                <input className="block border rounded border-gray-300 md:p-2" type="text" value={sentence} onChange={(e) => setSentence(e.target.value)} placeholder="Example Sentence" />
+                <input className="block border rounded border-line bg-surface text-foreground md:p-2" type="text" value={word} onChange={(e) => setWord(e.target.value)} placeholder="Word" required />
+                <input className="block border rounded border-line bg-surface text-foreground md:p-2" type="text" value={meaning} onChange={(e) => setMeaning(e.target.value)} placeholder="Meaning" required />
+                <input className="block border rounded border-line bg-surface text-foreground md:p-2" type="text" value={sentence} onChange={(e) => setSentence(e.target.value)} placeholder="Example Sentence" />
                 <div>
                     <select
-                        className="block border rounded border-gray-300 md:p-2"
+                        className="block border rounded border-line bg-surface text-foreground md:p-2"
                         value={selectedCategoryId}
                         onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
                         required
@@ -70,7 +70,7 @@ export function WordForm({ categories, onSubmit, onCreateCategory }: WordFormPro
                         ))}
                     </select>
                 </div>
-                <input className="block border rounded border-gray-300 md:p-2" type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="New category" />
+                <input className="block border rounded border-line bg-surface text-foreground md:p-2" type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="New category" />
                 <button className="block bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold p-1 md:py-2 rounded" type="button" onClick={handleSubmitCategory}>Add Category</button>
                 {categoryMessage && (
                     <p className="text-green-600">{categoryMessage}</p>

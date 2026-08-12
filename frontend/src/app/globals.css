@@ -1,22 +1,65 @@
 @import "tailwindcss";
 
+/*
+ * セマンティックなカラートークン層。
+ * コンポーネント側は bg-surface / text-muted のような意味ベースのクラスだけを使い、
+ * ライト・ダークの切り替えはこのファイルの変数の差し替えだけで完結させる。
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ネイティブ部品（input / select / スクロールバー）をテーマに追従させる */
+  color-scheme: light;
+
+  --background: #f9fafb; /* ページ背景 */
+  --foreground: #171717; /* 本文 */
+  --surface: #ffffff; /* カード・サイドバー・フォームの面 */
+  --surface-hover: #f3f4f6; /* 行ホバー・アイコンボタンのホバー */
+  --line: #d1d5db; /* 主な枠線 */
+  --line-subtle: #e5e7eb; /* 表の罫線など控えめな線 */
+  --muted: #4b5563; /* 補助テキスト */
+  --chip: #e5e7eb; /* カテゴリチップの背景 */
+  --chip-foreground: #1f2937;
+  --accent-soft: #dbeafe; /* アクティブなナビ・バッジの背景 */
+  --accent-soft-foreground: #1d4ed8;
+  --success-soft: #dcfce7; /* Learned バッジ */
+  --success-soft-foreground: #15803d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --surface: #171717;
+    --surface-hover: #262626;
+    --line: #404040;
+    --line-subtle: #2a2a2a;
+    --muted: #a3a3a3;
+    --chip: #303030;
+    --chip-foreground: #e5e5e5;
+    --accent-soft: #1e3a5f;
+    --accent-soft-foreground: #93c5fd;
+    --success-soft: #14532d;
+    --success-soft-foreground: #86efac;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-line: var(--line);
+  --color-line-subtle: var(--line-subtle);
+  --color-muted: var(--muted);
+  --color-chip: var(--chip);
+  --color-chip-foreground: var(--chip-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-foreground: var(--accent-soft-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-soft-foreground: var(--success-soft-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
