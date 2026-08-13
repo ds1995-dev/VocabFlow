@@ -25,4 +25,12 @@ class Word extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * 忘却曲線の復習状態。まだ一度も出題していない単語では null になる。
+     */
+    public function review()
+    {
+        return $this->hasOne(WordReview::class);
+    }
 }

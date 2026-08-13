@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(LearningActivity::class);
     }
+
+    public function wordReviews()
+    {
+        return $this->hasMany(WordReview::class);
+    }
 }

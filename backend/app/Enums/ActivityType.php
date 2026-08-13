@@ -7,9 +7,8 @@ enum ActivityType: string
     case WordCreated = 'word_created';
     case WordLearned = 'word_learned';
     case WordUnlearned = 'word_unlearned';
-    // 将来クイズ・SRS を実装したら case を追加する。
-    // case QuizAnswered = 'quiz_answered';
-    // case ReviewCompleted = 'review_completed';
+    // クイズを1セッション解いたときに記録する。1回答ごとではなくセッションごとに1件。
+    case QuizAnswered = 'quiz_answered';
 
     /**
      * ストリークの連続日数に数える種別かどうか。
