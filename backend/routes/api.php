@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\StreakController;
 use App\Http\Controllers\Api\WordController;
 use Illuminate\Http\Request;
@@ -27,4 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 学習ストリーク（連続学習日数）
     Route::get('/streak', [StreakController::class, 'show']);
+
+    // クイズ出題（4択の問題をサーバー側で組み立てて返す）
+    Route::get('/quiz/questions', [QuizController::class, 'questions']);
 });
