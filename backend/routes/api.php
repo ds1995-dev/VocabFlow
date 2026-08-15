@@ -31,4 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // クイズ出題（4択の問題をサーバー側で組み立てて返す）
     Route::get('/quiz/questions', [QuizController::class, 'questions']);
+    // クイズ回答の一括保存（正誤判定・box 更新・学習アクティビティの記録）
+    Route::post('/quiz/answers', [QuizController::class, 'store']);
 });
