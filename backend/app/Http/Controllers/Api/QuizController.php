@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuizQuestionRequest;
+use App\Http\Requests\StoreQuizAnswersRequest;
 use App\Quiz\QuizBuilder;
+use App\Quiz\QuizSession;
 use Illuminate\Validation\ValidationException;
 
 class QuizController extends Controller
@@ -42,5 +44,17 @@ class QuizController extends Controller
             'direction' => $request->direction()->value,
             'questions' => $questions,
         ]);
+    }
+
+    /**
+     * セッション分の回答をまとめて適用する。
+     *
+     * 新しく参照できるリソースを作るわけではないので 201 ではなく 200 を返す。
+     */
+    public function store(StoreQuizAnswersRequest $request)
+    {
+        return response()->json(
+            QuizSession::submit($request->user(), $request->validated('answers')),
+        );
     }
 }
