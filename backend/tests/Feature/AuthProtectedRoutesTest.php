@@ -67,4 +67,31 @@ class AuthProtectedRoutesTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    /*
+     * クイズの3ルートはここでは 401 だけを見る。
+     * 認証済みの 200 系は単語 4 件以上などの前提が要るので、
+     * QuizQuestionsTest / QuizAnswerTest / QuizSummaryTest 側で見ている。
+     */
+
+    public function test_未認証ではクイズ出題が401を返す(): void
+    {
+        $response = $this->getJson('/api/quiz/questions?mode=random');
+
+        $response->assertStatus(401);
+    }
+
+    public function test_未認証ではクイズ回答の保存が401を返す(): void
+    {
+        $response = $this->postJson('/api/quiz/answers', ['answers' => []]);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_未認証では復習件数の取得が401を返す(): void
+    {
+        $response = $this->getJson('/api/quiz/summary');
+
+        $response->assertStatus(401);
+    }
 }
