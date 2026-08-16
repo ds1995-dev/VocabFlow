@@ -33,4 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/quiz/questions', [QuizController::class, 'questions']);
     // クイズ回答の一括保存（正誤判定・box 更新・学習アクティビティの記録）
     Route::post('/quiz/answers', [QuizController::class, 'store']);
+    // 今日の復習件数（ダッシュボードの導線に使う）
+    Route::get('/quiz/summary', [QuizController::class, 'summary']);
 });

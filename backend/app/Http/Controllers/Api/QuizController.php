@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuizQuestionRequest;
 use App\Http\Requests\StoreQuizAnswersRequest;
+use App\Models\LearningActivity;
+use App\Models\WordReview;
 use App\Quiz\QuizBuilder;
 use App\Quiz\QuizSession;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class QuizController extends Controller
@@ -56,5 +59,24 @@ class QuizController extends Controller
         return response()->json(
             QuizSession::submit($request->user(), $request->validated('answers')),
         );
+    }
+
+    /**
+     * 今日解くべき件数を返す。
+     *
+     * ストリーク（学習履歴の集計）とは関心事が別なので /api/streak には相乗りさせない。
+     * due_count と new_count を分けるのは、画面の「今日の復習 N件」は期日到来分だけを出したい一方、
+     * 出題側（復習モード）は未出題も候補にするため。
+     */
+    public function summary(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'due_count' => WordReview::dueCountFor($user),
+            'new_count' => WordReview::newCountFor($user),
+            // フロントに日付ライブラリが無いので、学習日基準の「今日」はサーバ側で教える。
+            'today' => LearningActivity::currentStudyDate(),
+        ]);
     }
 }
