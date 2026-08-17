@@ -6,7 +6,7 @@ import type { NextRequest } from 'next/server';
 const AUTH_COOKIE = 'logged_in';
 
 // 未ログインで弾く保護ルート。
-const PROTECTED_PATHS = ['/', '/categories'];
+const PROTECTED_PATHS = ['/', '/categories', '/quiz'];
 // ログイン済みなら遠ざける認証ルート。
 const AUTH_PATHS = ['/login', '/register'];
 
@@ -28,6 +28,8 @@ export function middleware(request: NextRequest) {
 }
 
 // 対象パスのみに絞る。ルートグループ (auth) は URL に出ないため実パスで指定する。
+// PROTECTED_PATHS に足しただけではここに載らない限り middleware 自体が動かないので、
+// 新しい保護ルートを増やすときは必ず両方に足す。
 export const config = {
-  matcher: ['/', '/categories', '/login', '/register'],
+  matcher: ['/', '/categories', '/quiz', '/login', '/register'],
 };

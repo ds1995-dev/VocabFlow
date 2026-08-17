@@ -35,6 +35,8 @@ export function Sidebar() {
                 <p className="text-muted">Unlearned</p>
                 <Link href="/categories" className={pathname === '/categories' ? 'bg-accent-soft text-accent-soft-foreground font-bold' : 'text-muted hover:text-accent-soft-foreground'}>
                     Categories</Link>
+                <Link href="/quiz" className={pathname === '/quiz' ? 'block bg-accent-soft text-accent-soft-foreground font-bold' : 'block text-muted hover:text-accent-soft-foreground'}>
+                    Quiz</Link>
             </nav>
             <button
                 type="button"
