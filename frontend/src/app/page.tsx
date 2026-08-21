@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { Word } from '../types/word';
 import { Category } from '../types/category';
 import { Streak } from '../types/streak';
+import { QuizSummary } from '../types/quiz';
 import { Header } from '../components/dashboard/Header';
+import { ReviewBanner } from '../components/dashboard/ReviewBanner';
 import { StatCard } from '../components/dashboard/StatCard';
 import { WordForm } from '../components/dashboard/WordForm';
 import { WordCard } from '../components/dashboard/WordCard';
@@ -16,6 +18,7 @@ export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [streak, setStreak] = useState<Streak | null>(null);
+  const [quizSummary, setQuizSummary] = useState<QuizSummary | null>(null);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<number | 'all'>('all')
   const [filter, setFilter] = useState<'all' | 'learned' | 'unlearned'>('all');
@@ -39,6 +42,19 @@ export default function Home() {
     }
   };
 
+  // 今日の復習件数。ストリークと同じく補助的な指標なので、
+  // 取得に失敗しても単語一覧の表示は妨げない。
+  const refreshQuizSummary = async () => {
+    try {
+      const response = await apiFetch('/api/quiz/summary');
+      if (response.ok) {
+        setQuizSummary(await response.json());
+      }
+    } catch {
+      // 復習件数は補助的な指標なのでエラーは表示しない
+    }
+  };
+
   useEffect(() => {
     const fetchWords = async () => {
       try {
@@ -50,6 +66,8 @@ export default function Home() {
         setWords(data);
         setCategories(categoriesData);
         await refreshStreak();
+        // 復習件数は一覧表示を待たせないので await しない。
+        refreshQuizSummary();
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -151,6 +169,7 @@ export default function Home() {
   return (
       <main className="flex-1 min-w-0 p-4">
         <Header />
+        <ReviewBanner dueCount={quizSummary?.due_count ?? null} />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
           {stats.map((stat) => (
             <StatCard title={stat.title} value={stat.value} subtext={stat.subtext} key={stat.title} />
