@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { LoginForm } from '../../../components/auth/LoginForm';
 import { apiFetch } from '../../../lib/api';
+import { setToken } from '../../../lib/auth';
+import { AuthResponse } from '../../../types/user';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -20,8 +22,7 @@ export default function LoginPage() {
             setFieldErrors({});
             setGeneralError(null);
 
-            // 共通ラッパー経由で送る。POST なので apiFetch が CSRF cookie 取得・
-            // X-XSRF-TOKEN 付与・credentials: 'include' を自動で行う。
+            // 共通ラッパー経由で送る。ログイン前なのでトークンはまだ付かない。
             const response = await apiFetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -31,7 +32,9 @@ export default function LoginPage() {
             });
 
             // 500 が HTML を返す場合に備え、JSON パースは保護する
-            let data: { message?: string; errors?: Record<string, string[]> } | null = null;
+            let data:
+                | (Partial<AuthResponse> & { message?: string; errors?: Record<string, string[]> })
+                | null = null;
             try {
                 data = await response.json();
             } catch {
@@ -39,8 +42,13 @@ export default function LoginPage() {
             }
 
             if (response.ok) {
-                // フロント管理の認証フラグ cookie を立てる（middleware が参照する）
-                document.cookie = 'logged_in=1; path=/; SameSite=Lax';
+                // 想定外のレスポンスでトークン無しのまま遷移しないようにする
+                if (!data?.token) {
+                    setGeneralError('ログインに失敗しました');
+                    return false;
+                }
+                // アクセストークンを保存する（middleware もこの cookie を参照する）
+                setToken(data.token);
                 router.push('/');
                 return true;
             }

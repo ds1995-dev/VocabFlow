@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { RegisterForm } from '../../../components/auth/RegisterForm';
 import { User } from '../../../types/user';
 import { apiFetch } from '../../../lib/api';
+import { setToken } from '../../../lib/auth';
+import { AuthResponse } from '../../../types/user';
 
 
 export default function RegisterPage() {
@@ -24,8 +26,7 @@ export default function RegisterPage() {
             setGeneralError(null);
             setSuccessMessage(null);
 
-            // 共通ラッパー経由で送る。POST なので apiFetch が CSRF cookie 取得・
-            // X-XSRF-TOKEN 付与・credentials: 'include' を自動で行う。
+            // 共通ラッパー経由で送る。登録前なのでトークンはまだ付かない。
             const response = await apiFetch('/api/register', {
                 method: 'POST',
                 headers: {
@@ -35,7 +36,9 @@ export default function RegisterPage() {
             });
 
             // 500 が HTML を返す場合に備え、JSON パースは保護する
-            let data: { message?: string; errors?: Record<string, string[]> } | null = null;
+            let data:
+                | (Partial<AuthResponse> & { message?: string; errors?: Record<string, string[]> })
+                | null = null;
             try {
                 data = await response.json();
             } catch {
@@ -43,9 +46,14 @@ export default function RegisterPage() {
             }
 
             if (response.ok) {
-                // 登録時に backend で自動ログイン済み。フロント管理の認証フラグ cookie を
-                // 立ててから（middleware が参照する）ダッシュボードへ遷移する。
-                document.cookie = 'logged_in=1; path=/; SameSite=Lax';
+                // 想定外のレスポンスでトークン無しのまま遷移しないようにする
+                if (!data?.token) {
+                    setGeneralError('登録に失敗しました');
+                    return false;
+                }
+                // 登録時に backend がアクセストークンを払い出すので、そのまま保存して
+                // ログイン済みとしてダッシュボードへ遷移する。
+                setToken(data.token);
                 router.push('/');
                 return true;
             }

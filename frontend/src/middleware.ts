@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// 認証フラグ cookie 名（ログイン成功時に立てる logged_in=1）。
-// 非 HttpOnly のフロント管理フラグで、middleware から存在チェックのみ行う。
-const AUTH_COOKIE = 'logged_in';
+// アクセストークンの cookie 名（src/lib/auth.ts が読み書きする）。
+// 非 HttpOnly なので middleware から存在チェックのみ行う（値の検証はしない）。
+const AUTH_COOKIE = 'access_token';
 
 // 未ログインで弾く保護ルート。
 const PROTECTED_PATHS = ['/', '/categories', '/quiz'];
