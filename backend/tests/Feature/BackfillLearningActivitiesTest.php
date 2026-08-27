@@ -84,7 +84,7 @@ class BackfillLearningActivitiesTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $created = $this->actingAs($me)->postJson('/api/words', [
+        $created = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',

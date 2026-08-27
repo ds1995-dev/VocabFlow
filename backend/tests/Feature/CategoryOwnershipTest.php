@@ -21,7 +21,7 @@ class CategoryOwnershipTest extends TestCase
         $other = User::factory()->create();
         Category::factory()->count(3)->for($other)->create();
 
-        $response = $this->actingAs($me)->getJson('/api/categories');
+        $response = $this->actingAsUser($me)->getJson('/api/categories');
 
         $response->assertStatus(200);
         // 自分の 2 件だけが返り、他人のカテゴリは混ざらない
@@ -38,7 +38,7 @@ class CategoryOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->getJson("/api/categories/{$category->id}");
+        $response = $this->actingAsUser($me)->getJson("/api/categories/{$category->id}");
 
         $response->assertStatus(403);
     }
@@ -50,7 +50,7 @@ class CategoryOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/categories/{$category->id}", [
+        $response = $this->actingAsUser($me)->patchJson("/api/categories/{$category->id}", [
             'name' => '更新後の名前',
         ]);
 
@@ -64,7 +64,7 @@ class CategoryOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->deleteJson("/api/categories/{$category->id}");
+        $response = $this->actingAsUser($me)->deleteJson("/api/categories/{$category->id}");
 
         $response->assertStatus(403);
         // 削除されていないことを確認
@@ -75,7 +75,7 @@ class CategoryOwnershipTest extends TestCase
     {
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->postJson('/api/categories', [
+        $response = $this->actingAsUser($me)->postJson('/api/categories', [
             'name' => '英単語',
         ]);
 
@@ -95,7 +95,7 @@ class CategoryOwnershipTest extends TestCase
         $category = Category::factory()->for($me)->create();
         $words = Word::factory()->count(2)->for($me)->for($category)->create();
 
-        $response = $this->actingAs($me)->deleteJson("/api/categories/{$category->id}");
+        $response = $this->actingAsUser($me)->deleteJson("/api/categories/{$category->id}");
 
         $response->assertStatus(200);
         // カテゴリ削除に伴い配下の単語も cascade 削除される

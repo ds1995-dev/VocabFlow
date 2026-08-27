@@ -23,7 +23,7 @@ class WordOwnershipTest extends TestCase
         $otherCategory = Category::factory()->for($other)->create();
         Word::factory()->count(3)->for($other)->for($otherCategory)->create();
 
-        $response = $this->actingAs($me)->getJson('/api/words');
+        $response = $this->actingAsUser($me)->getJson('/api/words');
 
         $response->assertStatus(200);
         // 自分の 2 件だけが返り、他人の単語は混ざらない
@@ -43,7 +43,7 @@ class WordOwnershipTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}", [
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}", [
             'word' => 'updated',
             'meaning' => '更新後の意味',
             'sentence' => 'Updated sentence.',
@@ -60,7 +60,7 @@ class WordOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->deleteJson("/api/words/{$word->id}");
+        $response = $this->actingAsUser($me)->deleteJson("/api/words/{$word->id}");
 
         $response->assertStatus(403);
         // 削除されていないことを確認
@@ -74,7 +74,7 @@ class WordOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}/toggle-learned");
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}/toggle-learned");
 
         $response->assertStatus(403);
     }
@@ -87,7 +87,7 @@ class WordOwnershipTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->postJson('/api/words', [
+        $response = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -104,7 +104,7 @@ class WordOwnershipTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $response = $this->actingAs($me)->postJson('/api/words', [
+        $response = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -127,7 +127,7 @@ class WordOwnershipTest extends TestCase
         $category = Category::factory()->for($me)->create();
         $word = Word::factory()->for($me)->for($category)->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}", [
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}", [
             'word' => 'updated',
             'meaning' => '更新後の意味',
             'sentence' => 'Updated sentence.',

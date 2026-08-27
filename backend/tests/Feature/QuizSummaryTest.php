@@ -43,7 +43,7 @@ class QuizSummaryTest extends TestCase
 
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertExactJson([
@@ -63,7 +63,7 @@ class QuizSummaryTest extends TestCase
         $this->復習状態のある単語を作る($user, '2026-08-16');
         $this->復習状態のある単語を作る($user, '2026-08-17');
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson(['due_count' => 2]);
@@ -76,7 +76,7 @@ class QuizSummaryTest extends TestCase
         $user = User::factory()->create();
         Word::factory()->count(3)->for($user)->for(Category::factory()->for($user))->create();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson(['due_count' => 0, 'new_count' => 3]);
@@ -91,7 +91,7 @@ class QuizSummaryTest extends TestCase
         $this->復習状態のある単語を作る($user, '2026-08-16');
         Word::factory()->count(2)->for($user)->for(Category::factory()->for($user))->create();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson(['due_count' => 1, 'new_count' => 2]);
@@ -105,7 +105,7 @@ class QuizSummaryTest extends TestCase
         $user = User::factory()->create();
         $this->復習状態のある単語を作る($user, '2026-08-20');
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson(['due_count' => 0, 'new_count' => 0]);
@@ -120,7 +120,7 @@ class QuizSummaryTest extends TestCase
         $this->復習状態のある単語を作る($other, '2026-08-14');
         Word::factory()->count(3)->for($other)->for(Category::factory()->for($other))->create();
 
-        $response = $this->actingAs($me)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($me)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson(['due_count' => 0, 'new_count' => 0]);
@@ -135,7 +135,7 @@ class QuizSummaryTest extends TestCase
         // 日本時間の 8/17 が期日なので、UTC 基準で判定していると数え漏らす
         $this->復習状態のある単語を作る($user, '2026-08-17');
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/summary');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/summary');
 
         $response->assertStatus(200);
         $response->assertJson([

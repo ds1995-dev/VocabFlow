@@ -62,7 +62,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions');
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('mode');
@@ -72,7 +72,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=unknown');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=unknown');
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('mode');
@@ -82,7 +82,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=category');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=category');
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('category_id');
@@ -93,7 +93,7 @@ class QuizQuestionsTest extends TestCase
         [$user] = $this->単語を持つユーザーを作る();
         [, $otherCategory] = $this->単語を持つユーザーを作る();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson("/api/quiz/questions?mode=category&category_id={$otherCategory->id}");
 
         $response->assertStatus(422);
@@ -105,7 +105,7 @@ class QuizQuestionsTest extends TestCase
         // 4択が原理的に組めないので、出題0件ではなくエラーにする
         [$user] = $this->単語を持つユーザーを作る(3);
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=random');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=random');
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('words');
@@ -115,7 +115,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る(20);
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=random');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=random');
 
         $response->assertStatus(200);
         $response->assertJsonCount(10, 'questions');
@@ -126,7 +126,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る(20);
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=random&count=3');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=random&count=3');
 
         $response->assertStatus(200);
         $response->assertJsonCount(3, 'questions');
@@ -137,7 +137,7 @@ class QuizQuestionsTest extends TestCase
         [$user] = $this->単語を持つユーザーを作る();
         $over = config('quiz.max_question_count') + 1;
 
-        $response = $this->actingAs($user)->getJson("/api/quiz/questions?mode=random&count={$over}");
+        $response = $this->actingAsUser($user)->getJson("/api/quiz/questions?mode=random&count={$over}");
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('count');
@@ -147,7 +147,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る(20);
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=random&count=5');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=random&count=5');
 
         $response->assertStatus(200);
 
@@ -170,7 +170,7 @@ class QuizQuestionsTest extends TestCase
             'sentence' => 'He abandoned the plan.',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson('/api/quiz/questions?mode=random&direction=en_to_ja&count=1');
 
         $response->assertStatus(200);
@@ -192,7 +192,7 @@ class QuizQuestionsTest extends TestCase
             'sentence' => 'He abandoned the plan.',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson('/api/quiz/questions?mode=random&direction=ja_to_en&count=5');
 
         $response->assertStatus(200);
@@ -208,7 +208,7 @@ class QuizQuestionsTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る(20);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson('/api/quiz/questions?mode=random&direction=mixed&count=10');
 
         $response->assertStatus(200);
@@ -229,7 +229,7 @@ class QuizQuestionsTest extends TestCase
         $targetWords = Word::factory()->count(2)->for($user)->for($target)->create();
         Word::factory()->count(8)->for($user)->for($other)->create();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson("/api/quiz/questions?mode=category&category_id={$target->id}&count=10");
 
         $response->assertStatus(200);
@@ -255,7 +255,7 @@ class QuizQuestionsTest extends TestCase
         $今日 = $this->復習状態のある単語を作る($user, $category, '2026-08-15');
         $未来 = $this->復習状態のある単語を作る($user, $category, '2026-08-20');
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=review&count=2');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=review&count=2');
 
         $response->assertStatus(200);
         $askedIds = array_column($response->json('questions'), 'word_id');
@@ -276,7 +276,7 @@ class QuizQuestionsTest extends TestCase
         $期日到来 = $this->復習状態のある単語を作る($user, $category, '2026-08-10');
         $未出題 = Word::factory()->count(5)->for($user)->for($category)->create();
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=review&count=4');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=review&count=4');
 
         $response->assertStatus(200);
         $response->assertJsonCount(4, 'questions');
@@ -298,7 +298,7 @@ class QuizQuestionsTest extends TestCase
             $this->復習状態のある単語を作る($user, $category, '2026-08-20');
         }
 
-        $response = $this->actingAs($user)->getJson('/api/quiz/questions?mode=review');
+        $response = $this->actingAsUser($user)->getJson('/api/quiz/questions?mode=review');
 
         $response->assertStatus(200);
         $response->assertJsonCount(0, 'questions');
@@ -311,7 +311,7 @@ class QuizQuestionsTest extends TestCase
 
         $otherWordIds = Word::query()->where('user_id', $other->id)->pluck('id')->all();
 
-        $response = $this->actingAs($me)->getJson('/api/quiz/questions?mode=random&count=10');
+        $response = $this->actingAsUser($me)->getJson('/api/quiz/questions?mode=random&count=10');
 
         $response->assertStatus(200);
 
@@ -332,7 +332,7 @@ class QuizQuestionsTest extends TestCase
             'meaning' => '見捨てる',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAsUser($user)
             ->getJson('/api/quiz/questions?mode=random&direction=en_to_ja&count=5');
 
         $response->assertStatus(200);
