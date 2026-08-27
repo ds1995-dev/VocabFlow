@@ -28,7 +28,7 @@ class QuizStreakTest extends TestCase
      */
     private function 回答を送る(User $user, array $answers)
     {
-        return $this->actingAs($user)->postJson('/api/quiz/answers', ['answers' => $answers]);
+        return $this->actingAsUser($user)->postJson('/api/quiz/answers', ['answers' => $answers]);
     }
 
     public function test_何問回答してもquiz_answeredは1件だけ記録される(): void
@@ -110,7 +110,7 @@ class QuizStreakTest extends TestCase
             ['word_id' => $word->id, 'selected_word_id' => $word->id],
         ]);
 
-        $response = $this->actingAs($user)->getJson('/api/streak');
+        $response = $this->actingAsUser($user)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJson([

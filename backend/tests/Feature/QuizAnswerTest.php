@@ -51,7 +51,7 @@ class QuizAnswerTest extends TestCase
      */
     private function 回答を送る(User $user, array $answers)
     {
-        return $this->actingAs($user)->postJson('/api/quiz/answers', ['answers' => $answers]);
+        return $this->actingAsUser($user)->postJson('/api/quiz/answers', ['answers' => $answers]);
     }
 
     public function test_未認証では401を返す(): void
@@ -65,7 +65,7 @@ class QuizAnswerTest extends TestCase
     {
         [$user] = $this->単語を持つユーザーを作る();
 
-        $response = $this->actingAs($user)->postJson('/api/quiz/answers', []);
+        $response = $this->actingAsUser($user)->postJson('/api/quiz/answers', []);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('answers');

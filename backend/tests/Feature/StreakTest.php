@@ -41,7 +41,7 @@ class StreakTest extends TestCase
         // 一度も学習していないユーザー
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -63,7 +63,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-08-05');
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJsonPath('current_streak', 3);
@@ -81,7 +81,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-08-05');
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // 8/2 は途切れているので数えず、8/4〜8/6 の 3 日だけ
@@ -97,7 +97,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-08-04');
         $this->学習日を作る($me, '2026-08-05');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // 朝ログインした瞬間に 0 に見えないことがこの仕様の要
@@ -115,7 +115,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-08-03');
         $this->学習日を作る($me, '2026-08-04');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJsonPath('current_streak', 0);
@@ -133,7 +133,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-08-06');
         $this->学習日を作る($me, '2026-08-06', ActivityType::WordLearned);
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJsonPath('current_streak', 1);
@@ -147,7 +147,7 @@ class StreakTest extends TestCase
         $me = User::factory()->create();
         $this->学習日を作る($me, '2026-08-06', ActivityType::WordUnlearned);
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // 取り消し操作でストリークを稼げてはいけない
@@ -168,7 +168,7 @@ class StreakTest extends TestCase
         $this->学習日を作る($me, '2026-07-23');
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJsonPath('current_streak', 1);
@@ -188,7 +188,7 @@ class StreakTest extends TestCase
         $me = User::factory()->create();
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         $response->assertJsonPath('current_streak', 1);
@@ -202,7 +202,7 @@ class StreakTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $created = $this->actingAs($me)->postJson('/api/words', [
+        $created = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -210,12 +210,12 @@ class StreakTest extends TestCase
         ]);
         $created->assertStatus(201);
 
-        $before = $this->actingAs($me)->getJson('/api/streak');
+        $before = $this->actingAsUser($me)->getJson('/api/streak');
         $before->assertJsonPath('current_streak', 1);
 
-        $this->actingAs($me)->deleteJson("/api/words/{$created->json('id')}")->assertStatus(200);
+        $this->actingAsUser($me)->deleteJson("/api/words/{$created->json('id')}")->assertStatus(200);
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // word_id が nullOnDelete なので学習した事実は残る
@@ -234,7 +234,7 @@ class StreakTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2026-08-06 14:00:00', 'UTC'));
         LearningActivity::record($me, ActivityType::WordCreated);
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // UTC では 8/5 と 8/6 の 2 日にまたがるが、日本時間ではどちらも 8/6 なので 1 日
@@ -250,7 +250,7 @@ class StreakTest extends TestCase
         $me = User::factory()->create();
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // UTC の今日（8/5）で判定すると false になってしまう
@@ -266,7 +266,7 @@ class StreakTest extends TestCase
         $me = User::factory()->create();
         $this->学習日を作る($me, '2026-08-06');
 
-        $response = $this->actingAs($me)->getJson('/api/streak');
+        $response = $this->actingAsUser($me)->getJson('/api/streak');
 
         $response->assertStatus(200);
         // 'date' キャストのままだと "2026-08-06T00:00:00.000000Z" になってしまう

@@ -19,7 +19,7 @@ class LearningActivityRecordTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $response = $this->actingAs($me)->postJson('/api/words', [
+        $response = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -41,7 +41,7 @@ class LearningActivityRecordTest extends TestCase
         $me = User::factory()->create();
         $word = Word::factory()->for($me)->for(Category::factory()->for($me))->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}/toggle-learned");
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}/toggle-learned");
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('learning_activities', [
@@ -59,7 +59,7 @@ class LearningActivityRecordTest extends TestCase
         $word->is_learned = true;
         $word->save();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}/toggle-learned");
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}/toggle-learned");
 
         $response->assertStatus(200);
         // 解除も記録は残す（ストリークに数えないだけ）
@@ -77,7 +77,7 @@ class LearningActivityRecordTest extends TestCase
         $category = Category::factory()->for($me)->create();
         $word = Word::factory()->for($me)->for($category)->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}", [
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}", [
             'word' => 'updated',
             'meaning' => '更新後の意味',
             'sentence' => 'Updated sentence.',
@@ -98,7 +98,7 @@ class LearningActivityRecordTest extends TestCase
 
         $me = User::factory()->create();
 
-        $response = $this->actingAs($me)->patchJson("/api/words/{$word->id}/toggle-learned");
+        $response = $this->actingAsUser($me)->patchJson("/api/words/{$word->id}/toggle-learned");
 
         $response->assertStatus(403);
         // 認可で弾かれるので誰の記録も残らない
@@ -114,7 +114,7 @@ class LearningActivityRecordTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $created = $this->actingAs($me)->postJson('/api/words', [
+        $created = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -122,7 +122,7 @@ class LearningActivityRecordTest extends TestCase
         ]);
         $wordId = $created->json('id');
 
-        $response = $this->actingAs($me)->deleteJson("/api/words/{$wordId}");
+        $response = $this->actingAsUser($me)->deleteJson("/api/words/{$wordId}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('words', ['id' => $wordId]);
@@ -143,7 +143,7 @@ class LearningActivityRecordTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $response = $this->actingAs($me)->postJson('/api/words', [
+        $response = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',
@@ -165,7 +165,7 @@ class LearningActivityRecordTest extends TestCase
         $me = User::factory()->create();
         $myCategory = Category::factory()->for($me)->create();
 
-        $response = $this->actingAs($me)->postJson('/api/words', [
+        $response = $this->actingAsUser($me)->postJson('/api/words', [
             'word' => 'apple',
             'meaning' => 'りんご',
             'sentence' => 'I ate an apple.',

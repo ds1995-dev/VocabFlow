@@ -23,7 +23,7 @@ class AuthProtectedRoutesTest extends TestCase
         // ログイン済みユーザーとしてアクセスすると 200 でデータを取得できる
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->getJson('/api/words');
+        $response = $this->actingAsUser($user)->getJson('/api/words');
 
         $response->assertStatus(200);
     }
@@ -41,7 +41,7 @@ class AuthProtectedRoutesTest extends TestCase
         // ログイン済みなら自身のユーザー情報が返る
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->getJson('/api/user');
+        $response = $this->actingAsUser($user)->getJson('/api/user');
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -63,7 +63,7 @@ class AuthProtectedRoutesTest extends TestCase
         // ログイン済みなら学習履歴がなくても 200 で集計結果が返る
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->getJson('/api/streak');
+        $response = $this->actingAsUser($user)->getJson('/api/streak');
 
         $response->assertStatus(200);
     }
