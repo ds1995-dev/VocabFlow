@@ -11,3 +11,9 @@ export type AuthUser = {
     name: string;
     email: string;
 }
+
+// login / register の成功レスポンス（バックエンドが user とアクセストークンを返す）
+export type AuthResponse = {
+    user: AuthUser;
+    token: string;
+}
