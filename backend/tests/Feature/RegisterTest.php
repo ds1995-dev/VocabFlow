@@ -10,17 +10,6 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // SPA フロントエンド由来のステートフルなリクエストとして扱わせ、
-        // Sanctum のセッション認証（session ミドルウェア）を有効化する。
-        // 登録後の自動ログイン（session()->regenerate）に session ストアが必要。
-        // APP_URL の localhost は sanctum.stateful に含まれる。
-        $this->withHeader('Origin', config('app.url'));
-    }
-
     public function test_正しい情報で登録すると201を返す(): void
     {
         // 有効な入力（password は confirmed のため確認用も送る）
@@ -40,10 +29,28 @@ class RegisterTest extends TestCase
             ],
         ]);
         $response->assertJsonMissingPath('user.password');
+        $response->assertJsonMissingPath('user.remember_token');
         // ユーザーが DB に作成されていることを確認
         $this->assertDatabaseHas('users', ['email' => 'taro@example.com']);
-        // 登録後は自動ログイン状態になる
-        $this->assertAuthenticated();
+        // 登録後はそのまま使えるようアクセストークンが払い出される
+        $response->assertJsonStructure(['user', 'token']);
+        $this->assertNotEmpty($response->json('token'));
+    }
+
+    public function test_登録で発行されたトークンで保護ルートにアクセスできる(): void
+    {
+        $token = $this->postJson('/api/register', [
+            'name' => 'テスト太郎',
+            'email' => 'taro@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertStatus(201)->json('token');
+
+        $response = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->getJson('/api/user');
+
+        $response->assertStatus(200);
+        $response->assertJson(['email' => 'taro@example.com']);
     }
 
     public function test_重複したemailで登録すると422を返す(): void

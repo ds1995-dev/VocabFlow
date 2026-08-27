@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
@@ -14,16 +14,18 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
-        $validated['password'] = Hash::make($validated['password']);
+        // device_name はトークン名に使うだけでユーザーの属性ではないので取り除く
+        $attributes = Arr::except($validated, 'device_name');
+        $attributes['password'] = Hash::make($attributes['password']);
 
-        $user = User::create($validated);
+        $user = User::create($attributes);
 
-        // 登録後はそのままログイン状態にする（既定ガード web でセッションを確立）
-        Auth::login($user);
+        // 登録後はそのまま使えるようにアクセストークンを発行して返す
+        $token = $user->createToken($validated['device_name'] ?? 'web')->plainTextToken;
 
-        // セッション固定攻撃対策でセッション ID を再生成する
-        $request->session()->regenerate();
-
-        return response()->json(['user' => $user], 201);
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 201);
     }
 }
