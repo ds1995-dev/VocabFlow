@@ -12,8 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // SPA（Next.js）からの api リクエストをセッション認証の対象にする
-        $middleware->statefulApi();
+        // 認証は Bearer トークン方式のため、api ルートにセッションや CSRF は差し込まない
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
