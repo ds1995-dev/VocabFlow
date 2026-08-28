@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         // 認証は Bearer トークン方式のため、api ルートにセッションや CSRF は差し込まない
+
+        // 本番はロードバランサ配下で動く。X-Forwarded-* を信頼しないと
+        // Request::isSecure() が false になり url() が http を生成してしまう。
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

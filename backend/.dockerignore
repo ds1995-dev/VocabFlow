@@ -1,0 +1,23 @@
+# 依存はイメージ内で入れ直すのでコピーしない
+vendor
+node_modules
+
+# 秘密情報。環境変数はデプロイ先で設定する
+.env
+.env.backup
+.env.production
+
+# 本番イメージに不要なもの
+.git
+.gitignore
+.gitattributes
+tests
+phpunit.xml
+.phpunit.result.cache
+.phpunit.cache
+compose.yaml
+README.md
+storage/logs
+public/build
+public/hot
+.DS_Store
